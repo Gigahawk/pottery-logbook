@@ -14,9 +14,29 @@ jobs:
 
       - uses: jmservera/libreoffice-action@v0.3.0-alpha
         with:
-          command: libreoffice --headless --invisible --convert-to pdf 'logbook.odg' --outdir 'output'
+          command: "libreoffice --headless --invisible --convert-to 'pdf:draw_pdf_Export:{\"UseLosslessCompression\":{\"type\":\"boolean\",\"value\":\"true\"},\"ReduceImageResolution\": {\"type\":\"boolean\",\"value\":\"false\"}}' 'logbook.odg' --outdir 'output'"
+
+      - run: ls -ahl output
 
       - uses: actions/upload-artifact@v4
         with:
           name: pottery-logbook-export
           path: output
+          if-no-files-found: error
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: output
+
+  deploy-web:
+    if: github.ref == 'refs/heads/master'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    needs: export-pdf
+    steps:
+      - uses: actions/deploy-pages@v4
