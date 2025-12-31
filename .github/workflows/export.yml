@@ -12,9 +12,16 @@ jobs:
         with:
           lfs: true
 
+      - name: Generate redirect page
+        run: |
+          mkdir -p output
+          touch output/index.html
+          echo '<head><meta http-equiv="refresh" content="0; url=https://gigahawk.github.io/pottery-logbook/logbook.pdf" /></head>' > output/index.html
+
       - uses: jmservera/libreoffice-action@v0.3.0-alpha
         with:
           command: "libreoffice --headless --invisible --convert-to 'pdf:draw_pdf_Export:{\"UseLosslessCompression\":{\"type\":\"boolean\",\"value\":\"true\"},\"ReduceImageResolution\": {\"type\":\"boolean\",\"value\":\"false\"}}' 'logbook.odg' --outdir 'output'"
+
 
       - run: ls -ahl output
 
