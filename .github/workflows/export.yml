@@ -1,0 +1,22 @@
+name: export
+
+on:
+  push:
+
+jobs:
+  export-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - uses: jmservera/libreoffice-action@v0.3.0-alpha
+        with:
+          command: libreoffice --headless --invisible --convert-to pdf 'logbook.odg' --outdir 'output'
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pottery-logbook-export
+          path: output
